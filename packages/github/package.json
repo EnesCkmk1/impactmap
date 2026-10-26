@@ -1,0 +1,23 @@
+{
+  "name": "@impactmap/github",
+  "version": "0.1.0",
+  "description": "GitHub comment rendering and least-privilege workflow helpers for ImpactMap.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@impactmap/core": "0.1.0"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --pretty false"
+  }
+}

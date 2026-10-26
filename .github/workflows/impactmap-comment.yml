@@ -1,0 +1,33 @@
+name: ImpactMap comment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+# Example only. Add a pull_request trigger if you want comments on pull requests.
+# Do not use pull_request_target. That event runs with the base repository's
+# credentials and must not execute pull request code.
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: ./.github/actions/impactmap
+        with:
+          base: ${{ github.event.pull_request.base.sha || github.sha }}
+          publish-comment: "true"
+          fail-on: error
+        env:
+          IMPACTMAP_DISABLE_CODE_CONFIG: "1"

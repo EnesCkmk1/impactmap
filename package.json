@@ -1,0 +1,35 @@
+{
+  "name": "impactmap",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Explainable change-impact analysis for TypeScript, JavaScript, and Python repositories.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "bin": {
+    "impactmap": "./packages/cli/dist/bin.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --pretty false && tsc -p apps/web/tsconfig.json --pretty false",
+    "test": "tsc -b --pretty false && vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "benchmark": "tsc -b --pretty false && node scripts/benchmark.mjs",
+    "dev:web": "npm run dev -w @impactmap/web",
+    "build:web": "npm run build -w @impactmap/web"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.3",
+    "@types/node": "26.6.5",
+    "typescript": "6.0.3",
+    "vitest": "4.1.12"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@impactmap/core",
+  "version": "0.1.0",
+  "description": "ImpactMap analysis pipeline: discovery, module resolution, impact, rules, and reports.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@impactmap/config": "0.1.0",
+    "@impactmap/graph": "0.1.0",
+    "@impactmap/parsers": "0.1.0",
+    "ignore": "7.0.14",
+    "picomatch": "4.0.7",
+    "typescript": "6.0.3"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --pretty false"
+  }
+}

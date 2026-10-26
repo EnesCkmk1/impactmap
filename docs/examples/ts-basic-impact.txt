@@ -1,0 +1,51 @@
+ImpactMap
+Base fba2806ab476 (main) → WORKTREE fba2806ab476
+Scanned 12 files · skipped 4 · unresolved imports 1 · parse errors 0 · cycles 0
+
+Changes (1)
+  M src/auth/session.ts
+
+Interface impact (1)
+  INFO Exported declarations changed in src/auth/session.ts
+    In src/auth/session.ts, exported declarations changed for Session, readSession. Declaration text includes the exported body when it is in the same statement, so this is not by itself a signature or runtime break. Callers are listed separately as direct or transitive impact.
+
+Direct impact (4)
+  INFO src/index.ts directly depends on src/auth/session.ts
+    path: src/auth/session.ts → src/index.ts
+    src/index.ts directly imports or re-exports src/auth/session.ts. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → src/index.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: readSession.
+    evidence: src/index.ts:1 export { readSession } from "./auth/session.js";
+  INFO src/middleware/auth.ts directly depends on src/auth/session.ts
+    path: src/auth/session.ts → src/middleware/auth.ts
+    src/middleware/auth.ts directly imports or re-exports src/auth/session.ts. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → src/middleware/auth.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: readSession.
+    evidence: src/middleware/auth.ts:1 import { readSession } from "../auth/session.js";
+  INFO src/views/session-view.ts directly depends on src/auth/session.ts
+    path: src/auth/session.ts → src/views/session-view.ts
+    src/views/session-view.ts directly imports or re-exports src/auth/session.ts. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → src/views/session-view.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: Session.
+    evidence: src/views/session-view.ts:1 import type { Session } from "../auth/session.js";
+  INFO tests/session.test.ts directly depends on src/auth/session.ts
+    path: src/auth/session.ts → tests/session.test.ts
+    tests/session.test.ts directly imports or re-exports src/auth/session.ts. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → tests/session.test.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: readSession.
+    evidence: tests/session.test.ts:1 import { readSession } from "../src/auth/session.js";
+
+Transitive impact (2)
+  INFO src/app.ts transitively depends on src/auth/session.ts
+    path: src/auth/session.ts → src/index.ts → src/app.ts
+    src/app.ts reaches src/auth/session.ts through 2 dependency relationships. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → src/index.ts → src/app.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: readSession.
+    evidence: src/index.ts:1 export { readSession } from "./auth/session.js";
+    evidence: src/app.ts:1 import { readSession } from "./index.js";
+  INFO src/routes/account.ts transitively depends on src/auth/session.ts
+    path: src/auth/session.ts → src/middleware/auth.ts → src/routes/account.ts
+    src/routes/account.ts reaches src/auth/session.ts through 2 dependency relationships. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → src/middleware/auth.ts → src/routes/account.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: readSession.
+    evidence: src/middleware/auth.ts:1 import { readSession } from "../auth/session.js";
+    evidence: src/routes/account.ts:1 import { requireUser } from "../middleware/auth.js";
+
+Tests (1)
+  tests/session.test.ts
+    structural-direct: tests/session.test.ts imports changed file src/auth/session.ts. This is a structural relationship, not evidence that the test was executed or that it covers the change.
+
+Limitations
+  - Files outside the repository, including symlinks whose real path escapes it, are not read.
+  - node_modules, .git, and .impactmap are never scanned.
+  - 1 import could not be resolved. Affected-module results do not follow those specifiers.
+  - 1 dynamic import used a non-literal specifier and was not resolved.
+  - A static import is evidence of a structural dependency. It does not prove a runtime call, and a dependent module is not reported as broken.
