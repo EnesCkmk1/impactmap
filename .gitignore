@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.impactmap/
+coverage/
+apps/web/dist/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example

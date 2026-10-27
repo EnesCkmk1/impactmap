@@ -1,0 +1,27 @@
+{
+  "rules": [
+    {
+      "name": "public-entry",
+      "severity": "warning",
+      "type": "public-api-review",
+      "files": ["src/index.ts"],
+      "description": "Changes to the package entry exports need review."
+    },
+    {
+      "name": "no-cycles",
+      "severity": "warning",
+      "type": "no-circular",
+      "within": ["src/**"]
+    }
+  ],
+  "ci": { "failOn": "error" },
+  "test": {
+    "mappings": [
+      {
+        "name": "health-contract",
+        "tests": ["tests/math.test.ts"],
+        "modules": ["src/routes/health.ts"]
+      }
+    ]
+  }
+}

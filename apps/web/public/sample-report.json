@@ -1,0 +1,508 @@
+{
+  "version": "1",
+  "tool": {
+    "name": "impactmap",
+    "version": "0.1.0"
+  },
+  "deterministic": true,
+  "repositoryRoot": "fixtures/ts-basic",
+  "comparison": {
+    "baseRef": "main",
+    "baseSha": "fba2806ab4765f0407efe3936fd0d9705b7d51ee",
+    "headRef": "WORKTREE",
+    "headSha": "fba2806ab4765f0407efe3936fd0d9705b7d51ee",
+    "mergeBase": "fba2806ab4765f0407efe3936fd0d9705b7d51ee"
+  },
+  "summary": {
+    "filesScanned": 12,
+    "filesSkipped": 4,
+    "filesUnsupported": 0,
+    "parseErrors": 0,
+    "unresolvedImports": 1,
+    "dynamicNonLiteral": 1,
+    "nodes": 12,
+    "edges": 9,
+    "packages": 1,
+    "changedFiles": 1,
+    "directImpacts": 4,
+    "transitiveImpacts": 2,
+    "interfaceImpacts": 1,
+    "architecturalImpacts": 0,
+    "testsStructural": 1,
+    "testsHeuristic": 0,
+    "testsConfigured": 0,
+    "cycles": 0,
+    "partial": false
+  },
+  "limitations": [
+    "Files outside the repository, including symlinks whose real path escapes it, are not read.",
+    "node_modules, .git, and .impactmap are never scanned.",
+    "1 import could not be resolved. Affected-module results do not follow those specifiers.",
+    "1 dynamic import used a non-literal specifier and was not resolved.",
+    "A static import is evidence of a structural dependency. It does not prove a runtime call, and a dependent module is not reported as broken."
+  ],
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "code": "unresolved-import",
+      "message": "Could not resolve \"./does-not-exist.js\" in src/missing.ts.",
+      "file": "src/missing.ts",
+      "line": 1
+    },
+    {
+      "severity": "info",
+      "code": "dynamic-import-non-literal",
+      "message": "Dynamic import() argument is not a string literal, so the target module was not resolved.",
+      "file": "src/plugins/load.ts",
+      "line": 6
+    }
+  ],
+  "changes": [
+    {
+      "status": "modified",
+      "path": "src/auth/session.ts",
+      "additions": 2,
+      "deletions": 1
+    }
+  ],
+  "findings": [
+    {
+      "id": "d442d2eb1074774e",
+      "category": "interface",
+      "severity": "info",
+      "confidence": "structural",
+      "title": "Exported declarations changed in src/auth/session.ts",
+      "explanation": "In src/auth/session.ts, exported declarations changed for Session, readSession. Declaration text includes the exported body when it is in the same statement, so this is not by itself a signature or runtime break. Callers are listed separately as direct or transitive impact.",
+      "changedFile": "src/auth/session.ts",
+      "impactPath": ["src/auth/session.ts"],
+      "evidence": [],
+      "symbols": ["Session", "readSession"]
+    },
+    {
+      "id": "713f98fe92bd06c6",
+      "category": "direct",
+      "severity": "info",
+      "confidence": "structural",
+      "title": "src/index.ts directly depends on src/auth/session.ts",
+      "explanation": "src/index.ts directly imports or re-exports src/auth/session.ts. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → src/index.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: readSession.",
+      "changedFile": "src/auth/session.ts",
+      "affectedFile": "src/index.ts",
+      "impactPath": ["src/auth/session.ts", "src/index.ts"],
+      "evidence": [
+        {
+          "file": "src/index.ts",
+          "line": 1,
+          "column": 1,
+          "text": "export { readSession } from \"./auth/session.js\";",
+          "from": "src/index.ts",
+          "to": "src/auth/session.ts",
+          "kind": "export-from",
+          "typeOnly": false,
+          "dynamic": false,
+          "resolved": true,
+          "conditional": false
+        }
+      ],
+      "hops": 1,
+      "symbols": ["readSession"]
+    },
+    {
+      "id": "548dcca9b0cad4bb",
+      "category": "direct",
+      "severity": "info",
+      "confidence": "structural",
+      "title": "src/middleware/auth.ts directly depends on src/auth/session.ts",
+      "explanation": "src/middleware/auth.ts directly imports or re-exports src/auth/session.ts. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → src/middleware/auth.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: readSession.",
+      "changedFile": "src/auth/session.ts",
+      "affectedFile": "src/middleware/auth.ts",
+      "impactPath": ["src/auth/session.ts", "src/middleware/auth.ts"],
+      "evidence": [
+        {
+          "file": "src/middleware/auth.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import { readSession } from \"../auth/session.js\";",
+          "from": "src/middleware/auth.ts",
+          "to": "src/auth/session.ts",
+          "kind": "import",
+          "typeOnly": false,
+          "dynamic": false,
+          "resolved": true,
+          "conditional": false
+        }
+      ],
+      "hops": 1,
+      "symbols": ["readSession"]
+    },
+    {
+      "id": "a20ceb2c2d7f11ca",
+      "category": "direct",
+      "severity": "info",
+      "confidence": "structural",
+      "title": "src/views/session-view.ts directly depends on src/auth/session.ts",
+      "explanation": "src/views/session-view.ts directly imports or re-exports src/auth/session.ts. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → src/views/session-view.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: Session.",
+      "changedFile": "src/auth/session.ts",
+      "affectedFile": "src/views/session-view.ts",
+      "impactPath": ["src/auth/session.ts", "src/views/session-view.ts"],
+      "evidence": [
+        {
+          "file": "src/views/session-view.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import type { Session } from \"../auth/session.js\";",
+          "from": "src/views/session-view.ts",
+          "to": "src/auth/session.ts",
+          "kind": "import",
+          "typeOnly": true,
+          "dynamic": false,
+          "resolved": true,
+          "conditional": false
+        }
+      ],
+      "hops": 1,
+      "symbols": ["Session"]
+    },
+    {
+      "id": "cd5fa48cb12f3bfd",
+      "category": "direct",
+      "severity": "info",
+      "confidence": "structural",
+      "title": "tests/session.test.ts directly depends on src/auth/session.ts",
+      "explanation": "tests/session.test.ts directly imports or re-exports src/auth/session.ts. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → tests/session.test.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: readSession.",
+      "changedFile": "src/auth/session.ts",
+      "affectedFile": "tests/session.test.ts",
+      "impactPath": ["src/auth/session.ts", "tests/session.test.ts"],
+      "evidence": [
+        {
+          "file": "tests/session.test.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import { readSession } from \"../src/auth/session.js\";",
+          "from": "tests/session.test.ts",
+          "to": "src/auth/session.ts",
+          "kind": "import",
+          "typeOnly": false,
+          "dynamic": false,
+          "resolved": true,
+          "conditional": false
+        }
+      ],
+      "hops": 1,
+      "symbols": ["readSession"]
+    },
+    {
+      "id": "17802811edff554c",
+      "category": "transitive",
+      "severity": "info",
+      "confidence": "structural",
+      "title": "src/app.ts transitively depends on src/auth/session.ts",
+      "explanation": "src/app.ts reaches src/auth/session.ts through 2 dependency relationships. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → src/index.ts → src/app.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: readSession.",
+      "changedFile": "src/auth/session.ts",
+      "affectedFile": "src/app.ts",
+      "impactPath": ["src/auth/session.ts", "src/index.ts", "src/app.ts"],
+      "evidence": [
+        {
+          "file": "src/index.ts",
+          "line": 1,
+          "column": 1,
+          "text": "export { readSession } from \"./auth/session.js\";",
+          "from": "src/index.ts",
+          "to": "src/auth/session.ts",
+          "kind": "export-from",
+          "typeOnly": false,
+          "dynamic": false,
+          "resolved": true,
+          "conditional": false
+        },
+        {
+          "file": "src/app.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import { readSession } from \"./index.js\";",
+          "from": "src/app.ts",
+          "to": "src/index.ts",
+          "kind": "import",
+          "typeOnly": false,
+          "dynamic": false,
+          "resolved": true,
+          "conditional": false
+        }
+      ],
+      "hops": 2,
+      "symbols": ["readSession"]
+    },
+    {
+      "id": "312f38aa34972e47",
+      "category": "transitive",
+      "severity": "info",
+      "confidence": "structural",
+      "title": "src/routes/account.ts transitively depends on src/auth/session.ts",
+      "explanation": "src/routes/account.ts reaches src/auth/session.ts through 2 dependency relationships. Impact path (changed module first; each next module depends on the previous one): src/auth/session.ts → src/middleware/auth.ts → src/routes/account.ts. This is a structural fact from static imports. It does not mean the affected module is broken or that a runtime path executes the change. Imported names overlap exports whose declaration text changed: readSession.",
+      "changedFile": "src/auth/session.ts",
+      "affectedFile": "src/routes/account.ts",
+      "impactPath": [
+        "src/auth/session.ts",
+        "src/middleware/auth.ts",
+        "src/routes/account.ts"
+      ],
+      "evidence": [
+        {
+          "file": "src/middleware/auth.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import { readSession } from \"../auth/session.js\";",
+          "from": "src/middleware/auth.ts",
+          "to": "src/auth/session.ts",
+          "kind": "import",
+          "typeOnly": false,
+          "dynamic": false,
+          "resolved": true,
+          "conditional": false
+        },
+        {
+          "file": "src/routes/account.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import { requireUser } from \"../middleware/auth.js\";",
+          "from": "src/routes/account.ts",
+          "to": "src/middleware/auth.ts",
+          "kind": "import",
+          "typeOnly": false,
+          "dynamic": false,
+          "resolved": true,
+          "conditional": false
+        }
+      ],
+      "hops": 2,
+      "symbols": ["readSession"]
+    }
+  ],
+  "cycles": [],
+  "tests": [
+    {
+      "file": "tests/session.test.ts",
+      "relationship": "structural-direct",
+      "confidence": "structural",
+      "explanation": "tests/session.test.ts imports changed file src/auth/session.ts. This is a structural relationship, not evidence that the test was executed or that it covers the change.",
+      "relatedFiles": ["src/auth/session.ts"],
+      "evidence": [
+        {
+          "file": "tests/session.test.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import { readSession } from \"../src/auth/session.js\";",
+          "from": "tests/session.test.ts",
+          "to": "src/auth/session.ts",
+          "kind": "import",
+          "typeOnly": false,
+          "dynamic": false,
+          "resolved": true,
+          "conditional": false
+        }
+      ]
+    }
+  ],
+  "cache": {
+    "enabled": false,
+    "parseHits": 0,
+    "parseMisses": 0,
+    "resolutionReused": false
+  },
+  "graph": {
+    "direction": "dependency",
+    "directionMeaning": "An edge from A to B means A depends on B (A imports B). Impact paths are listed from the changed module toward affected modules, which follows reverse edges.",
+    "nodes": [
+      {
+        "id": "src/app.ts",
+        "path": "src/app.ts",
+        "language": "typescript",
+        "packageName": "ts-basic",
+        "external": false,
+        "test": false,
+        "parseStatus": "parsed",
+        "role": "transitive",
+        "hop": 2
+      },
+      {
+        "id": "src/auth/session.ts",
+        "path": "src/auth/session.ts",
+        "language": "typescript",
+        "packageName": "ts-basic",
+        "external": false,
+        "test": false,
+        "parseStatus": "parsed",
+        "role": "changed",
+        "hop": 0
+      },
+      {
+        "id": "src/index.ts",
+        "path": "src/index.ts",
+        "language": "typescript",
+        "packageName": "ts-basic",
+        "external": false,
+        "test": false,
+        "parseStatus": "parsed",
+        "role": "direct",
+        "hop": 1
+      },
+      {
+        "id": "src/middleware/auth.ts",
+        "path": "src/middleware/auth.ts",
+        "language": "typescript",
+        "packageName": "ts-basic",
+        "external": false,
+        "test": false,
+        "parseStatus": "parsed",
+        "role": "direct",
+        "hop": 1
+      },
+      {
+        "id": "src/routes/account.ts",
+        "path": "src/routes/account.ts",
+        "language": "typescript",
+        "packageName": "ts-basic",
+        "external": false,
+        "test": false,
+        "parseStatus": "parsed",
+        "role": "transitive",
+        "hop": 2
+      },
+      {
+        "id": "src/views/session-view.ts",
+        "path": "src/views/session-view.ts",
+        "language": "typescript",
+        "packageName": "ts-basic",
+        "external": false,
+        "test": false,
+        "parseStatus": "parsed",
+        "role": "direct",
+        "hop": 1
+      },
+      {
+        "id": "tests/session.test.ts",
+        "path": "tests/session.test.ts",
+        "language": "typescript",
+        "packageName": "ts-basic",
+        "external": false,
+        "test": true,
+        "parseStatus": "parsed",
+        "role": "direct",
+        "hop": 1
+      }
+    ],
+    "edges": [
+      {
+        "from": "src/app.ts",
+        "to": "src/index.ts",
+        "kind": "import",
+        "typeOnly": false,
+        "dynamic": false,
+        "resolved": true,
+        "conditional": false,
+        "specifiers": ["readSession"],
+        "evidence": {
+          "file": "src/app.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import { readSession } from \"./index.js\";"
+        }
+      },
+      {
+        "from": "src/index.ts",
+        "to": "src/auth/session.ts",
+        "kind": "export-from",
+        "typeOnly": false,
+        "dynamic": false,
+        "resolved": true,
+        "conditional": false,
+        "specifiers": ["readSession"],
+        "evidence": {
+          "file": "src/index.ts",
+          "line": 1,
+          "column": 1,
+          "text": "export { readSession } from \"./auth/session.js\";"
+        }
+      },
+      {
+        "from": "src/index.ts",
+        "to": "src/routes/account.ts",
+        "kind": "export-from",
+        "typeOnly": false,
+        "dynamic": false,
+        "resolved": true,
+        "conditional": false,
+        "specifiers": ["accountRoute"],
+        "evidence": {
+          "file": "src/index.ts",
+          "line": 2,
+          "column": 1,
+          "text": "export { accountRoute } from \"./routes/account.js\";"
+        }
+      },
+      {
+        "from": "src/middleware/auth.ts",
+        "to": "src/auth/session.ts",
+        "kind": "import",
+        "typeOnly": false,
+        "dynamic": false,
+        "resolved": true,
+        "conditional": false,
+        "specifiers": ["readSession"],
+        "evidence": {
+          "file": "src/middleware/auth.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import { readSession } from \"../auth/session.js\";"
+        }
+      },
+      {
+        "from": "src/routes/account.ts",
+        "to": "src/middleware/auth.ts",
+        "kind": "import",
+        "typeOnly": false,
+        "dynamic": false,
+        "resolved": true,
+        "conditional": false,
+        "specifiers": ["requireUser"],
+        "evidence": {
+          "file": "src/routes/account.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import { requireUser } from \"../middleware/auth.js\";"
+        }
+      },
+      {
+        "from": "src/views/session-view.ts",
+        "to": "src/auth/session.ts",
+        "kind": "import",
+        "typeOnly": true,
+        "dynamic": false,
+        "resolved": true,
+        "conditional": false,
+        "specifiers": ["Session"],
+        "evidence": {
+          "file": "src/views/session-view.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import type { Session } from \"../auth/session.js\";"
+        }
+      },
+      {
+        "from": "tests/session.test.ts",
+        "to": "src/auth/session.ts",
+        "kind": "import",
+        "typeOnly": false,
+        "dynamic": false,
+        "resolved": true,
+        "conditional": false,
+        "specifiers": ["readSession"],
+        "evidence": {
+          "file": "tests/session.test.ts",
+          "line": 1,
+          "column": 1,
+          "text": "import { readSession } from \"../src/auth/session.js\";"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "rules": [
+    {
+      "name": "domain-no-infra",
+      "severity": "error",
+      "type": "forbidden-dependency",
+      "from": ["src/domain/**"],
+      "to": ["src/infra/**"],
+      "description": "Domain must not depend on infrastructure."
+    },
+    {
+      "name": "ui-no-infra",
+      "severity": "error",
+      "type": "forbidden-dependency",
+      "from": ["src/ui/**"],
+      "to": ["src/infra/**"]
+    },
+    {
+      "name": "domain-allowed",
+      "severity": "error",
+      "type": "allowed-dependencies",
+      "from": ["src/domain/**"],
+      "allow": ["src/domain/**"]
+    },
+    {
+      "name": "web-no-secrets",
+      "severity": "error",
+      "type": "restricted-module",
+      "modules": ["src/server/secrets.ts"],
+      "importers": ["src/web/**"]
+    }
+  ],
+  "ci": { "failOn": "error" }
+}

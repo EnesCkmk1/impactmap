@@ -1,0 +1,23 @@
+{
+  "name": "@impactmap/parsers",
+  "version": "0.1.0",
+  "description": "Language parsers for ImpactMap. TypeScript and JavaScript use the TypeScript compiler API.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "typescript": "6.0.3"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --pretty false"
+  }
+}

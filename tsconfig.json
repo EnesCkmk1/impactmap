@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/graph" },
+    { "path": "packages/config" },
+    { "path": "packages/parsers" },
+    { "path": "packages/core" },
+    { "path": "packages/github" },
+    { "path": "packages/cli" }
+  ]
+}

@@ -1,0 +1,75 @@
+name: ImpactMap
+description: Run ImpactMap change-impact analysis. Analysis itself is read-only; publishing a comment is opt-in.
+
+inputs:
+  base:
+    description: Base commit SHA or ref. Prefer a SHA from the workflow event.
+    required: true
+  head:
+    description: Optional head commit. Leave empty to analyze the working tree.
+    required: false
+    default: ""
+  command:
+    description: impact or check
+    required: false
+    default: check
+  fail-on:
+    description: never, error, or warning. Empty uses the repository configuration for check.
+    required: false
+    default: ""
+  publish-comment:
+    description: Publish a pull request comment. Requires pull-requests write and GITHUB_TOKEN in the environment.
+    required: false
+    default: "false"
+  report-path:
+    description: JSON report path
+    required: false
+    default: impactmap-report.json
+
+runs:
+  using: composite
+  steps:
+    - name: Analyze
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      env:
+        IMPACTMAP_BASE: ${{ inputs.base }}
+        IMPACTMAP_HEAD: ${{ inputs.head }}
+        IMPACTMAP_COMMAND: ${{ inputs.command }}
+        IMPACTMAP_FAIL_ON: ${{ inputs.fail-on }}
+        IMPACTMAP_REPORT: ${{ inputs.report-path }}
+        IMPACTMAP_DISABLE_CODE_CONFIG: "1"
+      run: |
+        set -euo pipefail
+        if [ "$IMPACTMAP_COMMAND" != "impact" ] && [ "$IMPACTMAP_COMMAND" != "check" ]; then
+          echo "command must be impact or check" >&2
+          exit 2
+        fi
+        if command -v impactmap >/dev/null 2>&1; then
+          bin=(impactmap)
+        else
+          bin=(node "${GITHUB_WORKSPACE}/packages/cli/dist/bin.js")
+        fi
+        args=("$IMPACTMAP_COMMAND" --base "$IMPACTMAP_BASE" --format json --output "$IMPACTMAP_REPORT" --no-cache)
+        if [ -n "$IMPACTMAP_HEAD" ]; then
+          args+=(--head "$IMPACTMAP_HEAD")
+        fi
+        if [ -n "$IMPACTMAP_FAIL_ON" ]; then
+          args+=(--fail-on "$IMPACTMAP_FAIL_ON")
+        fi
+        "${bin[@]}" "${args[@]}"
+
+    - name: Publish pull request comment
+      if: inputs.publish-comment == 'true'
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      env:
+        IMPACTMAP_REPORT: ${{ inputs.report-path }}
+      run: |
+        set -euo pipefail
+        if command -v impactmap >/dev/null 2>&1; then
+          bin=(impactmap)
+        else
+          bin=(node "${GITHUB_WORKSPACE}/packages/cli/dist/bin.js")
+        fi
+        "${bin[@]}" comment --report "$IMPACTMAP_REPORT"

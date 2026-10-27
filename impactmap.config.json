@@ -1,0 +1,12 @@
+{
+  "rules": [
+    {
+      "name": "packages-no-cycles",
+      "severity": "error",
+      "type": "no-circular",
+      "within": ["packages/**"],
+      "description": "ImpactMap packages should not import each other in a cycle."
+    }
+  ],
+  "ci": { "failOn": "error" }
+}
