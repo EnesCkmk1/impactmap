@@ -30,9 +30,64 @@ Analysis is read-only. ImpactMap does not edit source files, create commits, mer
 
 A dependent module is not reported as broken. A static import is a structural fact, not proof of a runtime call.
 
-## Example
+## Example: a change to session handling
 
-This output is a real `impactmap impact --base main` run against a Git copy of [`fixtures/ts-basic`](fixtures/ts-basic) after `src/auth/session.ts` was edited. The full text is in [`docs/examples/ts-basic-impact.txt`](docs/examples/ts-basic-impact.txt). The commit prefix below is from that capture.
+[`fixtures/ts-basic`](fixtures/ts-basic) is a small TypeScript app in this repository. The account route never imports the session module. It imports middleware, and the middleware imports the session module:
+
+```ts
+// fixtures/ts-basic/src/auth/session.ts
+export function readSession(token: string): Session | null {
+  if (!token) return null;
+  return { userId: token };
+}
+```
+
+```ts
+// fixtures/ts-basic/src/middleware/auth.ts
+import { readSession } from "../auth/session.js";
+
+export function requireUser(token: string) {
+  return readSession(token);
+}
+```
+
+```ts
+// fixtures/ts-basic/src/routes/account.ts
+import { requireUser } from "../middleware/auth.js";
+
+export function accountRoute(token: string) {
+  return requireUser(token);
+}
+```
+
+`tests/session.test.ts` imports `readSession` directly. `tests/math.test.ts` does not, so a session edit does not recommend it. `src/views/session-view.ts` imports only the `Session` type. `src/index.ts` re-exports `readSession`, and `src/app.ts` imports that barrel.
+
+Impact direction, from the changed file toward modules that depend on it:
+
+```mermaid
+flowchart LR
+  session["src/auth/session.ts"]
+  middleware["src/middleware/auth.ts"]
+  account["src/routes/account.ts"]
+  index["src/index.ts"]
+  app["src/app.ts"]
+  view["src/views/session-view.ts"]
+  test["tests/session.test.ts"]
+  session --> middleware --> account
+  session --> index --> app
+  session --> view
+  session --> test
+```
+
+The arrows follow the report, which is the reverse of an import edge. `account.ts` imports `middleware/auth.ts`, and that file imports `session.ts`.
+
+The captured run edited the working tree so `Session` gained `issuedAt` and `readSession` returned it. Command:
+
+```bash
+node packages/cli/dist/bin.js impact --base main
+```
+
+This excerpt is from that run. The commit prefix belongs to the capture. Every line below is copied from [`docs/examples/ts-basic-impact.txt`](docs/examples/ts-basic-impact.txt); the direct findings for `src/index.ts` and `src/views/session-view.ts`, and the transitive finding for `src/app.ts`, are in that file.
 
 ```text
 ImpactMap
@@ -42,22 +97,36 @@ Scanned 12 files · skipped 4 · unresolved imports 1 · parse errors 0 · cycle
 Changes (1)
   M src/auth/session.ts
 
+Interface impact (1)
+  INFO Exported declarations changed in src/auth/session.ts
+    In src/auth/session.ts, exported declarations changed for Session, readSession. Declaration text includes the exported body when it is in the same statement, so this is not by itself a signature or runtime break. Callers are listed separately as direct or transitive impact.
+
 Direct impact (4)
   INFO src/middleware/auth.ts directly depends on src/auth/session.ts
     path: src/auth/session.ts → src/middleware/auth.ts
     evidence: src/middleware/auth.ts:1 import { readSession } from "../auth/session.js";
+  INFO tests/session.test.ts directly depends on src/auth/session.ts
+    path: src/auth/session.ts → tests/session.test.ts
+    evidence: tests/session.test.ts:1 import { readSession } from "../src/auth/session.js";
 
 Transitive impact (2)
   INFO src/routes/account.ts transitively depends on src/auth/session.ts
     path: src/auth/session.ts → src/middleware/auth.ts → src/routes/account.ts
+    evidence: src/middleware/auth.ts:1 import { readSession } from "../auth/session.js";
     evidence: src/routes/account.ts:1 import { requireUser } from "../middleware/auth.js";
 
 Tests (1)
   tests/session.test.ts
-    structural-direct: tests/session.test.ts imports changed file src/auth/session.ts.
+    structural-direct: tests/session.test.ts imports changed file src/auth/session.ts. This is a structural relationship, not evidence that the test was executed or that it covers the change.
 ```
 
-The same JSON report is the sample loaded by the local explorer (`npm run dev:web`, then **Load sample**).
+The header still says four direct and two transitive findings. The two direct findings omitted above are `src/index.ts` and `src/views/session-view.ts`. The other transitive finding is `src/app.ts`, reached through `src/index.ts`. The fixture has one unresolved import and one non-literal `import()`, and the report says those were not followed. `tests/math.test.ts` is absent.
+
+The JSON from this run is [`apps/web/public/sample-report.json`](apps/web/public/sample-report.json). `npm run dev:web`, then **Load sample**, draws that graph:
+
+![ImpactMap explorer showing the session.ts change, direct dependents, and the account route two hops away](docs/examples/ts-basic-explorer.png)
+
+To reproduce the capture, copy `fixtures/ts-basic` to a temporary Git repository, commit it, apply the `issuedAt` edit, build this repo, and run `impact --base main` from that copy. The SHA in the header will differ. The paths and evidence lines will not.
 
 ## Commands
 
